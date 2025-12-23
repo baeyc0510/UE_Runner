@@ -10,6 +10,8 @@ public class RogueliteCore : ModuleRules
             new string[]
             {
                 "Core",
+                "GameplayTags",
+                "DeveloperSettings"
             }
         );
 

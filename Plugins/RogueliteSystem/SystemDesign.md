@@ -342,6 +342,7 @@ URogueliteLibrary::RegisterAction(ActionData)
 URogueliteLibrary::UnregisterAction(ActionData)
 URogueliteLibrary::RegisterActionsFromPath(Path)
 URogueliteLibrary::RegisterActionsFromDatabaseAsset(Path)
+URogueliteLibrary::RegisterActionsFromDatatable(Path)
 URogueliteLibrary::GetAllRegisteredActions() → TArray
 URogueliteLibrary::GetActionsByTag(Tag) → TArray
 ```
@@ -646,3 +647,19 @@ void UDLCManager::LoadDLCPack(FString PackName)
 | UI | 스타일 게임마다 다름 |
 | 전투 시스템 | 완전히 범위 밖 |
 | 시너지/진화 로직 | 델리게이트로 게임이 구현 |
+
+# 코딩 컨벤션
+1. Header에서는 함수들이 어느 클래스에서 override되었는지 
+/*~ SomeClass1 Interface ~*/
+void Class1Func1() override;
+void Class1Func2() override;
+/*~ SomeClass2 Interface ~*/
+void Class2Func1() override;
+와 같은 형태로 작성된다.
+
+2. 1번처럼 어떤 영역을 나타내는 주석은 /*~ Some Area ~*/ 와 같이 나타낸다. 
+3. if문 아래에 무조건 {} 블록을 사용한다.
+4. nullcheck는 가급적 IsValid(Some Object) 형태의 인터페이스를 활용한다.
+5. 구조체 각 필드 위에는 간략한 주석을 작성한다.
+6. public 함수 및 protected 함수 위에는 간략한 주석을 작성한다.
+7. 주석은 한국어로 작성한다.
