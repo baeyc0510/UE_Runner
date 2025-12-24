@@ -46,7 +46,7 @@ void URunnerAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffect
 			// 사망 처리
 			if (GetHealth() <= 0.f)
 			{
-				if (bIsCombatInterface)
+				if (bIsCombatInterface && !ICombatInterface::Execute_IsDead(GetOwningActor()))
 				{
 					ICombatInterface::Execute_Die(GetOwningActor());
 				}

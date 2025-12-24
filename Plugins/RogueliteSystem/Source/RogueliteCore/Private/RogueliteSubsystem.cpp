@@ -22,7 +22,7 @@ void URogueliteSubsystem::Deinitialize()
 	AllActions.Empty();
 	TagIndex.Empty();
 	PreAcquireChecks.Empty();
-
+	
 	Super::Deinitialize();
 }
 
@@ -67,7 +67,7 @@ void URogueliteSubsystem::RegisterAction(URogueliteActionData* Action)
 	AllActions.Add(Action);
 
 	// 태그 인덱스 업데이트
-	for (const FGameplayTag& Tag : Action->Tags)
+	for (const FGameplayTag& Tag : Action->ActionTags)
 	{
 		TagIndex.FindOrAdd(Tag).Add(Action);
 	}
@@ -88,7 +88,7 @@ void URogueliteSubsystem::UnregisterAction(URogueliteActionData* Action)
 	AllActions.Remove(Action);
 
 	// 태그 인덱스에서 제거
-	for (const FGameplayTag& Tag : Action->Tags)
+	for (const FGameplayTag& Tag : Action->ActionTags)
 	{
 		if (TSet<URogueliteActionData*>* Set = TagIndex.Find(Tag))
 		{
@@ -797,7 +797,7 @@ void URogueliteSubsystem::ApplyAutoEffects(URogueliteActionData* Action, int32 S
 
 	if (Action->bAutoGrantTags)
 	{
-		RunState.ActiveTags.AppendTags(Action->Tags);
+		RunState.ActiveTags.AppendTags(Action->ActionTags);
 	}
 }
 

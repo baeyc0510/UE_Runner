@@ -27,7 +27,8 @@ protected:
 	virtual void ApplyDamageEffect_Implementation(const FGameplayEffectSpecHandle& InEffectHandle) override;
 	virtual void OnDamageApplied_Implementation(float DamageAmount, bool bIsCriticalHit) override {}
 	virtual void Die_Implementation() override {}
-
+	virtual bool IsDead_Implementation() override {return false;}
+	
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	UAbilitySystemComponent* AbilitySystemComponent;

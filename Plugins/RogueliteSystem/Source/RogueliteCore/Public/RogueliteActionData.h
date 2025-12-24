@@ -34,7 +34,7 @@ public:
 
 	// 분류 태그 (Type, Pool, Rarity 등)
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Classification")
-	FGameplayTagContainer Tags;
+	FGameplayTagContainer ActionTags;
 
 	/*~ Values ~*/
 

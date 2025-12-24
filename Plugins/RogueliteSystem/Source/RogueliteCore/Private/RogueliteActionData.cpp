@@ -19,17 +19,17 @@ float URogueliteActionData::GetValue(FGameplayTag Key, float DefaultValue) const
 
 bool URogueliteActionData::HasTag(FGameplayTag Tag) const
 {
-	return Tags.HasTag(Tag);
+	return ActionTags.HasTag(Tag);
 }
 
 bool URogueliteActionData::HasAnyTags(const FGameplayTagContainer& InTags) const
 {
-	return Tags.HasAny(InTags);
+	return ActionTags.HasAny(InTags);
 }
 
 bool URogueliteActionData::HasAllTags(const FGameplayTagContainer& InTags) const
 {
-	return Tags.HasAll(InTags);
+	return ActionTags.HasAll(InTags);
 }
 
 bool URogueliteActionData::IsMaxStacked(int32 CurrentStacks) const

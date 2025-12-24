@@ -28,7 +28,7 @@ DECLARE_DYNAMIC_DELEGATE_RetVal_TwoParams(bool, FRoguelitePreAcquireCheckSignatu
  * 로그라이트 시스템 핵심 서브시스템.
  * ActionDB 관리, RunState 관리, 쿼리 실행을 담당.
  */
-UCLASS()
+UCLASS(BlueprintType)
 class ROGUELITECORE_API URogueliteSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()

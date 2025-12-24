@@ -36,11 +36,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	FGameplayAttributeData AttackSpeed;
 	ATTRIBUTE_ACCESSORS(URunnerAttributeSet, AttackSpeed)
-	
-	UPROPERTY(BlueprintReadOnly)
-	FGameplayAttributeData AttackPower;
-	ATTRIBUTE_ACCESSORS(URunnerAttributeSet, AttackPower)
-	
+
 	UPROPERTY(BlueprintReadOnly)
 	FGameplayAttributeData MoveSpeedMultiplier;
 	ATTRIBUTE_ACCESSORS(URunnerAttributeSet, MoveSpeedMultiplier)

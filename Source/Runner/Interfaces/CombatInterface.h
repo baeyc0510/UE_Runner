@@ -30,4 +30,7 @@ public:
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Die();
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool IsDead();
 };

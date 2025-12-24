@@ -8,7 +8,6 @@
 
 struct FDamageStatics
 {
-	DECLARE_ATTRIBUTE_CAPTUREDEF(AttackPower);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalChance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalMultiplier);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(IncomingDamage);
@@ -16,10 +15,9 @@ struct FDamageStatics
 	FDamageStatics()
 	{
 		// Source (공격자) 어트리뷰트
-		DEFINE_ATTRIBUTE_CAPTUREDEF(URunnerAttributeSet, AttackPower, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(URunnerAttributeSet, CriticalChance, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(URunnerAttributeSet, CriticalMultiplier, Source, false);
-        
+
 		// Target (피격자) 어트리뷰트
 		DEFINE_ATTRIBUTE_CAPTUREDEF(URunnerAttributeSet, IncomingDamage, Target, false);
 	}
@@ -33,72 +31,69 @@ static const FDamageStatics& DamageStatics()
 
 UDamageExecutionCalculation::UDamageExecutionCalculation(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	RelevantAttributesToCapture.Add(DamageStatics().AttackPowerDef);
 	RelevantAttributesToCapture.Add(DamageStatics().CriticalChanceDef);
 	RelevantAttributesToCapture.Add(DamageStatics().CriticalMultiplierDef);
 	RelevantAttributesToCapture.Add(DamageStatics().IncomingDamageDef);
 }
 
-void UDamageExecutionCalculation::Execute_Implementation(
-	const FGameplayEffectCustomExecutionParameters& ExecutionParams,
-	FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
+void UDamageExecutionCalculation::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
 	Super::Execute_Implementation(ExecutionParams, OutExecutionOutput);
-	
-	UAbilitySystemComponent* SourceASC = ExecutionParams.GetSourceAbilitySystemComponent();
-    UAbilitySystemComponent* TargetASC = ExecutionParams.GetTargetAbilitySystemComponent();
 
-    AActor* SourceActor = SourceASC ? SourceASC->GetAvatarActor() : nullptr;
-    AActor* TargetActor = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
+	// UAbilitySystemComponent* SourceASC = ExecutionParams.GetSourceAbilitySystemComponent();
+	// UAbilitySystemComponent* TargetASC = ExecutionParams.GetTargetAbilitySystemComponent();
+	//
+	// AActor* SourceActor = SourceASC ? SourceASC->GetAvatarActor() : nullptr;
+	// AActor* TargetActor = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
 
-    const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
-    
-    FAggregatorEvaluateParameters EvalParams;
-    EvalParams.SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
-    EvalParams.TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
+	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
 
-    // 어트리뷰트 값 가져오기
-    float AttackPower = 0.f;
-    float CritChance = 0.f;
-    float CritMultiplier = 1.2f;
+	FAggregatorEvaluateParameters EvalParams;
+	EvalParams.SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
+	EvalParams.TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
 
-    ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
-        DamageStatics().AttackPowerDef, EvalParams, AttackPower);
-    ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
-        DamageStatics().CriticalChanceDef, EvalParams, CritChance);
-    ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
-        DamageStatics().CriticalMultiplierDef, EvalParams, CritMultiplier);
+	// Set by caller 값 가져오기
+	float AttackPower = Spec.GetSetByCallerMagnitude(TAG_Data_AttackPower, false, 0.f);
 
-	
+	// 어트리뷰트 값 가져오기
+	float CritChance = 0.f;
+	float CritMultiplier = 1.2f;
+
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
+		DamageStatics().CriticalChanceDef, EvalParams, CritChance);
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
+		DamageStatics().CriticalMultiplierDef, EvalParams, CritMultiplier);
+
+
 	float BaseDamage = AttackPower;
-	
-    // 크리티컬 판정
-    bool bIsCritical = FMath::FRand() < CritChance;
-    if (bIsCritical)
-    {
-        BaseDamage *= CritMultiplier;
-    }
-	
-	// TODO: 방어력 적용
-	float FinalDamage = BaseDamage; 
-	
-	// Spec에 정보 저장
-    FGameplayEffectSpec* MutableSpec = ExecutionParams.GetOwningSpecForPreExecuteMod();
-    if (MutableSpec)
-    {
-    	if (bIsCritical)
-    	{
-    		MutableSpec->AddDynamicAssetTag(TAG_Data_Critical);	
-    	}
-    }
 
-    // 데미지 적용
-    if (FinalDamage > 0.f)
-    {
-        OutExecutionOutput.AddOutputModifier(
-            FGameplayModifierEvaluatedData(
-                DamageStatics().IncomingDamageProperty,
-                EGameplayModOp::Additive,
-                FinalDamage));
-    }
+	// 크리티컬 판정
+	bool bIsCritical = FMath::FRand() < CritChance;
+	if (bIsCritical)
+	{
+		BaseDamage *= CritMultiplier;
+	}
+
+	// TODO: 방어력 적용
+	float FinalDamage = BaseDamage;
+
+	// Spec에 정보 저장
+	FGameplayEffectSpec* MutableSpec = ExecutionParams.GetOwningSpecForPreExecuteMod();
+	if (MutableSpec)
+	{
+		if (bIsCritical)
+		{
+			MutableSpec->AddDynamicAssetTag(TAG_Data_Critical);
+		}
+	}
+
+	// 데미지 적용
+	if (FinalDamage > 0.f)
+	{
+		OutExecutionOutput.AddOutputModifier(
+			FGameplayModifierEvaluatedData(
+				DamageStatics().IncomingDamageProperty,
+				EGameplayModOp::Additive,
+				FinalDamage));
+	}
 }
